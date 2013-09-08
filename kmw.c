@@ -1,22 +1,38 @@
 #include <linux/module.h>
+#include <linux/platform_device.h>
 
 #include "kmw.h"
 
-static int kmw_demo_param = 0;
-module_param(kmw_demo_param, int, 0644);
-
 // defines for device infrastructure
 #define		KMWNAME			"kmw"
+#define		KMWDRIVERNAME		KMWNAME "driver"
+
+// variables for driver
+static struct platform_driver kmw_driver = {
+	.driver = {
+		.name = KMWDRIVERNAME,
+		.owner = THIS_MODULE,
+	},
+};
 
 static int kmw_init(void)
 {
-	PDEBUG("init - demo param: %d\n", kmw_demo_param);
+	int err;
+	PDEBUG("init\n");
+	// register our driver:
+	err = platform_driver_register(&kmw_driver);
+	if (err < 0)
+		goto err1;
 	return 0;
+err1:
+	return err;
 }
 
 static void kmw_exit(void)
 {
-	PDEBUG("exit - demo param: %d\n", kmw_demo_param);
+	// unregister our driver
+	platform_driver_unregister(&kmw_driver);
+	PDEBUG("exit\n");
 }
 
 module_init(kmw_init);
