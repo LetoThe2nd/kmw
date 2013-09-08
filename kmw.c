@@ -6,12 +6,28 @@
 // defines for device infrastructure
 #define		KMWNAME			"kmw"
 #define		KMWDRIVERNAME		KMWNAME "driver"
+#define		KMWATTRGROUPNAME	KMWNAME "attrs"
 
 // variables for driver
+static struct attribute * kmw_drv_attrs[] = {
+	NULL
+};
+
+static struct attribute_group kmw_drv_attrs_grp = {
+	.name = KMWATTRGROUPNAME,
+	.attrs = kmw_drv_attrs,
+};
+
+static const struct attribute_group * kmw_drv_attrs_grps[] = {
+	&kmw_drv_attrs_grp,
+	NULL,
+};
+
 static struct platform_driver kmw_driver = {
 	.driver = {
 		.name = KMWDRIVERNAME,
 		.owner = THIS_MODULE,
+		.groups = kmw_drv_attrs_grps,
 	},
 };
 
