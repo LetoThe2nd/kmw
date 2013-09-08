@@ -1,5 +1,13 @@
 # Object files
 *.o
+*.ko
+
+# Generated code
+.tmp_versions
+*.mod.c
+*.cmd
+Module.symvers
+modules.order
 
 # Libraries
 *.lib
@@ -15,3 +23,10 @@
 *.exe
 *.out
 *.app
+
+# Temporary files
+*.swp
+
+# Eclipse file for working
+.project
+.cproject
