@@ -1,3 +1,4 @@
+#include <linux/device.h>
 #include <linux/module.h>
 #include <linux/platform_device.h>
 
@@ -8,9 +9,25 @@
 #define		KMWDRIVERNAME		KMWNAME "driver"
 #define		KMWATTRGROUPNAME	KMWNAME "attrs"
 
+// functions for driver
+static ssize_t kmw_attr_show(struct device_driver * driver, char * buf)
+{
+	PDEBUG("attr_show\n");
+	return 0;
+};
+
+static ssize_t kmw_attr_store(struct device_driver * driver, const char * buf, size_t count)
+{
+	PDEBUG("attr_store\n");
+	return count;
+};
+
 // variables for driver
+static DRIVER_ATTR(kmw_attr, S_IRUGO | S_IWUSR, kmw_attr_show, kmw_attr_store);
+
 static struct attribute * kmw_drv_attrs[] = {
-	NULL
+	&driver_attr_kmw_attr.attr,
+	NULL,
 };
 
 static struct attribute_group kmw_drv_attrs_grp = {
