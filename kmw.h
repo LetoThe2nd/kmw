@@ -14,4 +14,8 @@
 #define PDEBUG(fmt, args...)
 #endif
 
+struct kmw_ops {
+	void (*set_output)(unsigned int);
+};
+
 #endif // _LINUX_KMW_H

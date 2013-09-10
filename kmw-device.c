@@ -8,10 +8,20 @@ void    kmw_release(struct device *dev)
 	PDEBUG("device release\n");
 }
 
+void	kmw_set_output(unsigned int value)
+{
+	PDEBUG("device sets output to %d\n", value);
+}
+
+static struct kmw_ops kmw_device_ops = {
+	.set_output = kmw_set_output,
+};
+
 static struct platform_device kmw_device = {
 	.name = KMWNAME,
 	.dev = {
 		.release = kmw_release,
+		.platform_data = &kmw_device_ops,
 	}
 };
 

@@ -9,6 +9,9 @@
 // defines for device infrastructure
 #define		KMWATTRGROUPNAME	KMWNAME "attrs"
 
+// functionality for driver
+static struct platform_device * kmw_device = NULL;
+
 // functions for driver
 static ssize_t kmw_attr_show(struct device_driver * driver, char * buf)
 {
@@ -18,26 +21,45 @@ static ssize_t kmw_attr_show(struct device_driver * driver, char * buf)
 
 static ssize_t kmw_attr_store(struct device_driver * driver, const char * buf, size_t count)
 {
+	struct kmw_ops * ops = kmw_device->dev.platform_data;
 	PDEBUG("driver attr_store\n");
+	ops->set_output(buf[0]);
 	return count;
 };
 
 static int kmw_driver_probe(struct platform_device * pdev)
 {
+	int err = 0;
 	PDEBUG("driver probe target: %s...\n", pdev->name);
-	if (strncmp(KMWNAME, pdev->name, 3) == 0)
+	if (strncmp(KMWNAME, pdev->name, 3) != 0)
 	{
-		PDEBUG("...probe successful\n");
-		return 0;
+		PDEBUG("...name not matching\n");
+		err = -1;
+		goto err1;
 	}
+	if (kmw_device != NULL)
+	{
+		PDEBUG("... already bound\n");
+		err = -2;
+		goto err2;
+	}
+	kmw_device = pdev;
 
-	PDEBUG("...probe unsuccessful\n");
-	return -1;
+	PDEBUG("...probe successful\n");
+	return 0;
+err2:
+err1:
+	return err;
 };
 
 static int kmw_driver_remove(struct platform_device * pdev)
 {
 	PDEBUG("driver remove\n");
+	if (kmw_device == pdev)
+	{
+		PDEBUG("...unbound\n");
+		kmw_device = NULL;
+	}
 	return 0;
 };
 
