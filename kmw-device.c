@@ -10,7 +10,9 @@ void    kmw_release(struct device *dev)
 
 void	kmw_set_output(unsigned int value)
 {
-	PDEBUG("device sets output to %d\n", value);
+	int i;
+	for (i = 0; i < 3; ++i)
+		PDEBUG("device - set led%d to %s\n", i, ((value & (1L << i)) ? "high" : "low"));
 }
 
 static struct kmw_ops kmw_device_ops = {
