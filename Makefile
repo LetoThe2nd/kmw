@@ -1,4 +1,5 @@
-obj-m := kmw.o
+obj-m := kmw-driver.o
+obj-m += kmw-device.o
 KDIR := /lib/modules/$(shell uname -r)/build
 PWD := $(shell pwd)
 

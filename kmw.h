@@ -1,6 +1,9 @@
 #ifndef _LINUX_KMW_H
 #define _LINUX_KMW_H
 
+// kmw-global defines
+#define		KMWNAME			"kmw"
+
 // defines for debugging
 #define DEBUG
 
