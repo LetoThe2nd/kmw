@@ -13,6 +13,6 @@ Noteworthy literature:
 
 [Linux Device Drivers, 3rd edition](http://lwn.net/Kernel/LDD3/) - a little outdated by now, but still contains lots and lots of valuable imformation.
 
-[Linux Cross Reference](http://lxr.free-electrons.com/) - the kernel sources as cross-referenced html. Great for vrowsing and folling symbols!
+[Linux Cross Reference](http://lxr.free-electrons.com/) - the kernel sources as cross-referenced html. Great for browsing and following symbols!
 
 [LinuxForU's Device Driver series](http://www.linuxforu.com/tag/linux-device-drivers-series/) - a very nice series on device drivers. Some parts have to be taken with a pinch of salt, but definitely a good read.
