@@ -1,6 +1,7 @@
 #include <linux/gpio.h>
 #include <linux/module.h>
 #include <linux/platform_device.h>
+#include <linux/timer.h>
 
 #include "kmw.h"
 
@@ -15,9 +16,15 @@ static unsigned int kmw_dev_led_red = 7;
 static unsigned int kmw_dev_led_green = 50;
 static unsigned int kmw_dev_led_blue = 51;
 
+static unsigned int kmw_hold_time = 1;
+
 module_param(kmw_dev_led_red, uint, 0644);
 module_param(kmw_dev_led_green, uint, 0644);
 module_param(kmw_dev_led_blue, uint, 0644);
+
+module_param(kmw_hold_time, uint, 0644);
+
+static struct timer_list kmw_off_timer;
 
 static unsigned int * const kmw_dev_leds[] = {
 	&kmw_dev_led_red,
@@ -41,6 +48,8 @@ void	kmw_set_output(unsigned int value)
 #ifdef KMW_USE_GPIO
 		gpio_direction_output(*kmw_dev_leds[i], (value & (1L << i)));
 #endif
+		if(value && kmw_hold_time)
+			mod_timer(&kmw_off_timer, jiffies + (HZ * kmw_hold_time));
 	}
 }
 
@@ -55,6 +64,12 @@ static struct platform_device kmw_device = {
 		.platform_data = &kmw_device_ops,
 	}
 };
+
+static void kmw_set_led_off(unsigned long data)
+{
+	PDEBUG("turning rgb off again after %d seconds\n", kmw_hold_time);
+	kmw_set_output(0x0L);
+}
 
 static int kmw_device_init(void)
 {
@@ -75,6 +90,13 @@ static int kmw_device_init(void)
 	err = platform_device_register(&kmw_device);
 	if (err < 0)
 		goto err4;
+
+	kmw_set_led_off(0);
+
+	init_timer(&kmw_off_timer);
+	kmw_off_timer.function = kmw_set_led_off;
+	kmw_off_timer.data = 0L;
+
 	return 0;
 err4:
 #ifdef KMW_USE_GPIO
@@ -91,6 +113,7 @@ err1:
 static void kmw_device_exit(void)
 {
 	PDEBUG("device_exit\n");
+	del_timer_sync(&kmw_off_timer);
 #ifdef KMW_USE_GPIO
 	gpio_free(kmw_dev_led_red);
 	gpio_free(kmw_dev_led_green);
