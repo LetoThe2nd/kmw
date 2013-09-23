@@ -77,12 +77,14 @@ static int kmw_device_init(void)
 		goto err4;
 	return 0;
 err4:
+#ifdef KMW_USE_GPIO
 	gpio_free(kmw_dev_led_blue);
 err3:
 	gpio_free(kmw_dev_led_green);
 err2:
 	gpio_free(kmw_dev_led_red);
 err1:
+#endif
 	return err;
 }
 
