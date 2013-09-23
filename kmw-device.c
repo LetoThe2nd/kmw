@@ -4,6 +4,13 @@
 
 #include "kmw.h"
 
+#undef KMW_USE_GPIO
+#ifdef CONFIG_ARCH_OMAP
+#ifdef CONFIG_GPIOLIB
+#define KMW_USE_GPIO
+#endif
+#endif
+
 static unsigned int kmw_dev_led_red = 7;
 static unsigned int kmw_dev_led_green = 50;
 static unsigned int kmw_dev_led_blue = 51;
@@ -31,7 +38,7 @@ void	kmw_set_output(unsigned int value)
 	for (i = 0; i < KMW_DEV_LED_COUNT; ++i)
 	{
 		PDEBUG("device - set led%d @ gpio %u to %s\n", i, *kmw_dev_leds[i], ((value & (1L << i)) ? "high" : "low"));
-#ifdef CONFIG_GPIOLIB
+#ifdef KMW_USE_GPIO
 		gpio_direction_output(*kmw_dev_leds[i], (value & (1L << i)));
 #endif
 	}
@@ -54,7 +61,7 @@ static int kmw_device_init(void)
 	int err;
 
 	PDEBUG("device_init\n");
-#ifdef CONFIG_GPIOLIB
+#ifdef KMW_USE_GPIO
 	err = gpio_request(kmw_dev_led_red, KMWNAME "_led_red");
 	if (err < 0)
 		goto err1;
@@ -82,7 +89,7 @@ err1:
 static void kmw_device_exit(void)
 {
 	PDEBUG("device_exit\n");
-#ifdef CONFIG_GPIOLIB
+#ifdef KMW_USE_GPIO
 	gpio_free(kmw_dev_led_red);
 	gpio_free(kmw_dev_led_green);
 	gpio_free(kmw_dev_led_blue);
