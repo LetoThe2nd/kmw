@@ -21,9 +21,14 @@ static ssize_t kmw_attr_show(struct device_driver * driver, char * buf)
 
 static ssize_t kmw_attr_store(struct device_driver * driver, const char * buf, size_t count)
 {
-	struct kmw_ops * ops = kmw_device->dev.platform_data;
-	PDEBUG("driver attr_store\n");
-	ops->set_output(buf[0]);
+	struct kmw_ops * ops;
+	if (kmw_device)
+	{
+		ops = kmw_device->dev.platform_data;
+		PDEBUG("driver attr_store\n");
+		if (ops->set_output)
+			ops->set_output(buf[0]);
+	}
 	return count;
 };
 
